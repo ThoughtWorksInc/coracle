@@ -11,21 +11,25 @@
   (-> (r/response {:error "not found"}) (r/status 404)))
 
 (defn add-activity [db req]
-  (prn req)
-  (prn db)
   (mc/insert db "activities" (:body req))
   (-> (r/response {}) (r/status 201)))
+
+(defn get-activities [db req]
+  (->>
+    (mc/find-maps db "activities")
+    (map #(dissoc % :_id))
+    (r/response)))
 
 (defn _handler [db]
   (scenic-handler (load-routes-from-file "routes.txt")
                   {:add-activity    (partial add-activity db)
-                   :show-activities (fn [req] (r/response {:some :activities}))}
+                   :show-activities (partial get-activities db)}
                    not-found-handler))
 
 (defn handler [db]
   (-> (_handler db)
       (wrap-json-body :keywords? false)
-      (wrap-json-response {:key-fn identity})))
+      (wrap-json-response)))
 
 (def port 7000)
 (def server (atom nil))
