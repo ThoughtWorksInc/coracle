@@ -1,1 +1,2 @@
-GET /status status
+POST /activities add-activity
+GET  /activities show-activities
