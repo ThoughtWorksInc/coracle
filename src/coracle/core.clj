@@ -21,14 +21,14 @@
     (map #(dissoc % :_id))
     (r/response)))
 
-(defn _handler [db]
-  (scenic-handler (load-routes-from-file "routes.txt")
-                  {:add-activity    (partial add-activity db)
-                   :show-activities (partial get-activities db)}
-                   not-found-handler))
+(defn handlers [db]
+  {:add-activity    (partial add-activity db)
+   :show-activities (partial get-activities db)})
+
+(def routes (load-routes-from-file "routes.txt"))
 
 (defn handler [db]
-  (-> (_handler db)
+  (-> (scenic-handler routes (handlers db) not-found-handler)
       (wrap-json-body :keywords? false)
       (wrap-json-response)))
 
