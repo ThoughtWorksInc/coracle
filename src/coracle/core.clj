@@ -13,12 +13,15 @@
 (defn not-found-handler [req]
   (-> (r/response {:error "not found"}) (r/status 404)))
 
+(defn activity-from-request [req]
+  (->> req :body m/activity-from-json))
+
 (defn add-activity [db req]
-  (->> req
-       :body
-       m/activity-from-json
-      (db/add-activity db))
-  (-> (r/response {}) (r/status 201)))
+  (let [data (activity-from-request req)]
+    (if (empty? (:error data))
+      (do (db/add-activity db data)
+          (-> (r/response {:status :success}) (r/status 201)))
+      (-> (r/response (:error data)) (r/status 401)))))
 
 (defn get-activities [db req]
   (let [query-params (-> req :params m/marshall-query-params)]

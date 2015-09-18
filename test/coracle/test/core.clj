@@ -32,6 +32,15 @@
              (-> (test-handler request) :status) => 201
              (first (db/fetch-activities test-db {})) => (contains {"@actor" "dave"})))))
 
+(fact "Get 401 error if json is invalid"
+      (h/with-db-do
+        (fn [test-db]
+          (let [test-handler (handler test-db)
+                request (post-json "/activities" "asdfas")
+                response (test-handler request)
+                ]
+            (-> response :status) => 401))))
+
 (facts "Can load json activity"
        (h/with-db-do
          (fn [test-db]

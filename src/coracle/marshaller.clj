@@ -10,9 +10,11 @@
       (assoc-in m (concat [:errors] key-path) "not-present"))))
 
 (defn activity-from-json [activity]
-  (->
-    activity
-    (coerce-time ["@published"])))
+  (if (map? activity)
+    (-> activity
+        (coerce-time ["@published"]))
+    {:error "invalid-json"}
+    ))
 
 (defn activity-to-json [activity]
   (-> activity
