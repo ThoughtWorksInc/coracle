@@ -5,7 +5,8 @@
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
             [ring.adapter.jetty :refer [run-jetty]]
             [monger.core :as m]
-            [monger.collection :as mc]))
+            [monger.collection :as mc]
+            [coracle.config :as c]))
 
 (defn not-found-handler [req]
   (-> (r/response {:error "not found"}) (r/status 404)))
@@ -31,13 +32,12 @@
       (wrap-json-body :keywords? false)
       (wrap-json-response)))
 
-(def port 7000)
 (def server (atom nil))
 
-(defn start-server [db port]
-  (reset! server (run-jetty (handler db) {:port port})))
+(defn start-server [db host port]
+  (reset! server (run-jetty (handler db) {:port port :host host})))
 
 (defn -main [& args]
   (prn "starting server...")
-  (let [db (-> (m/connect-via-uri "mongodb://localhost:27017/coracle") :db)]
-    (start-server db port)))
+  (let [db (-> (m/connect-via-uri (c/mongo-uri)) :db)]
+    (start-server db (c/app-host) (c/app-port))))

@@ -9,9 +9,14 @@
                  [ring/ring-json "0.4.0"]
                  [scenic "0.2.5"]
                  [cheshire "5.5.0"]
-                 [com.novemberain/monger "3.0.0-rc2"]]
+                 [com.novemberain/monger "3.0.0-rc2"]
+                 [environ "1.0.1"]]
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}
              :dev {:dependencies [[midje "1.6.3"]
                                   [ring-mock "0.1.5"]]
-                   :plugins [[lein-midje "3.1.1"]]}})
+                   :plugins [[lein-midje "3.1.1"]
+                             [lein-environ "1.0.1"]]
+                   :env {:app-host "0.0.0.0"
+                         :app-port "6000"
+                         :mongo-uri "mongodb://localhost:27017/coracle"}}})
