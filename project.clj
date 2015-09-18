@@ -11,7 +11,8 @@
                  [cheshire "5.5.0"]
                  [com.novemberain/monger "3.0.0-rc2"]
                  [environ "1.0.1"]
-                 [clj-time "0.11.0"]]
+                 [clj-time "0.11.0"]
+                 [prismatic/schema "1.0.1"]]
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}
              :dev {:dependencies [[midje "1.6.3"]

@@ -23,7 +23,7 @@
       (assoc-in-query ["@published" "$gt"] from)
       (assoc-in-query ["@published" "$lt"] to)))
 
-(defn fetch-activities [db & {:keys [from to]}]
+(defn fetch-activities [db {:keys [from to]}]
   (let [query (construct-query from to)]
     (->>
       (mc/find-maps db coll query)

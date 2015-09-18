@@ -4,20 +4,28 @@
             [ring.util.response :as r]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
             [ring.adapter.jetty :refer [run-jetty]]
+            [ring.middleware.params :refer [wrap-params]]
+            [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [coracle.config :as c]
-            [coracle.db :as db]))
+            [coracle.db :as db]
+            [coracle.marshaller :as m]))
 
 (defn not-found-handler [req]
   (-> (r/response {:error "not found"}) (r/status 404)))
 
 (defn add-activity [db req]
-  (db/add-activity db (:body req))
+  (->> req
+       :body
+       m/activity-from-json
+      (db/add-activity db))
   (-> (r/response {}) (r/status 201)))
 
 (defn get-activities [db req]
-  (->>
-    (db/fetch-activities db)
-    (r/response)))
+  (let [query-params (-> req :params m/marshall-query-params)]
+    (->>
+      (db/fetch-activities db query-params)
+      (map m/activity-to-json)
+      (r/response))))
 
 (defn handlers [db]
   {:add-activity    (partial add-activity db)
@@ -27,6 +35,8 @@
 
 (defn handler [db]
   (-> (scenic-handler routes (handlers db) not-found-handler)
+      wrap-keyword-params
+      wrap-params
       (wrap-json-body :keywords? false)
       (wrap-json-response)))
 
