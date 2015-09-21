@@ -66,4 +66,13 @@
               (fact
                 (-> response :body json/parse-string) => [(activity-json "bloob" d2)]))))))
 
+(fact "Invalid query parameters return 401"
+      (h/with-db-do
+        (fn [test-db]
+          (let [test-handler (handler test-db)
+                request (request :get (format "/activities?from=blah&to=blah"))]
+            (db/add-activity test-db (db-activity "blah" (t/now)))
+            (let [response (test-handler request)]
+              (:status response) => 401)))))
+
 

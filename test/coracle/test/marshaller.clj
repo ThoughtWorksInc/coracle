@@ -12,9 +12,9 @@
   (fact
     (v/activity-from-json  ?activity) => ?output)
   ?activity                             ?output
-  {}                                    {:errors {"@published" "not-present"}}
+  {}                                    {:error {"@published" "not-present"}}
   {"@published" "blah"}                 {"@published" "blah"
-                                         :errors {"@published" "invalid"}}
+                                         :error {"@published" "invalid"}}
   {"@published" valid-timestamp-str}    {"@published" valid-timestamp-long}
   )
 

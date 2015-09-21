@@ -25,10 +25,12 @@
 
 (defn get-activities [db req]
   (let [query-params (-> req :params m/marshall-query-params)]
-    (->>
-      (db/fetch-activities db query-params)
-      (map m/activity-to-json)
-      (r/response))))
+    (prn query-params)
+    (if (empty? (:error query-params))
+      (->> (db/fetch-activities db query-params)
+           (map m/activity-to-json)
+           (r/response))
+      (-> (r/response (:error query-params)) (r/status 401)))))
 
 (defn handlers [db]
   {:add-activity    (partial add-activity db)

@@ -7,9 +7,9 @@
       v
       (if-let [l (-> v tc/from-string tc/to-long)]
         (assoc-in m key-path l)
-        (assoc-in m (concat [:errors] key-path) "invalid"))
+        (assoc-in m (concat [:error] key-path) "invalid"))
       (not optional?)
-      (assoc-in m (concat [:errors] key-path) "not-present")
+      (assoc-in m (concat [:error] key-path) "not-present")
       :else m)))
 
 (defn activity-from-json [activity]
