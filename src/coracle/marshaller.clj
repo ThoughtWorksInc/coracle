@@ -1,18 +1,21 @@
 (ns coracle.marshaller
   (:require [clj-time.coerce :as tc]))
 
-(defn coerce-time [m key-path]
+(defn coerce-time [m key-path optional?]
   (let [v (get-in m key-path)]
-    (if v
+    (cond
+      v
       (if-let [l (-> v tc/from-string tc/to-long)]
         (assoc-in m key-path l)
         (assoc-in m (concat [:errors] key-path) "invalid"))
-      (assoc-in m (concat [:errors] key-path) "not-present"))))
+      (not optional?)
+      (assoc-in m (concat [:errors] key-path) "not-present")
+      :else m)))
 
 (defn activity-from-json [activity]
   (if (map? activity)
     (-> activity
-        (coerce-time ["@published"]))
+        (coerce-time ["@published"] false))
     {:error "invalid-json"}
     ))
 
@@ -27,8 +30,8 @@
 
 (defn marshall-query-params [query-params]
   (-> query-params
-      (update-in [:from] (comp tc/to-long tc/from-string))
-      (update-in [:to] (comp tc/to-long tc/from-string))
+      (coerce-time [:from] true)
+      (coerce-time [:to] true)
       remove-nil-values))
 
 
