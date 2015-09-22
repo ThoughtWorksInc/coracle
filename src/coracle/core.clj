@@ -23,11 +23,16 @@
           (-> (r/response {:status :success}) (r/status 201)))
       (-> (r/response (:error data)) (r/status 400)))))
 
+(def descending #(compare %2 %1))
+
+(def published #(get % "@published"))
+
 (defn get-activities [db req]
   (let [query-params (-> req :params m/marshall-query-params)]
     (prn query-params)
     (if (empty? (:error query-params))
       (->> (db/fetch-activities db query-params)
+           (sort-by published descending)
            (map m/activity-to-json)
            (r/response))
       (-> (r/response (:error query-params)) (r/status 400)))))
