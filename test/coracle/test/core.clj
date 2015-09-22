@@ -39,7 +39,7 @@
                 request (post-json "/activities" "asdfas")
                 response (test-handler request)
                 ]
-            (-> response :status) => 401))))
+            (-> response :status) => 400))))
 
 (facts "Can load json activity"
        (h/with-db-do
@@ -73,6 +73,6 @@
                 request (request :get (format "/activities?from=blah&to=blah"))]
             (db/add-activity test-db (db-activity "blah" (t/now)))
             (let [response (test-handler request)]
-              (:status response) => 401)))))
+              (:status response) => 400)))))
 
 

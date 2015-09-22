@@ -20,7 +20,7 @@
                        :plugins      [[lein-midje "3.1.1"]
                                       [lein-environ "1.0.1"]]
                        :env          {:app-host   "0.0.0.0"
-                                      :app-port   "6000"
+                                      :app-port   "8000"
                                       :mongo-host "localhost"
                                       :mongo-port "27017"
                                       :mongo-db   "coracle"}}

@@ -21,7 +21,7 @@
     (if (empty? (:error data))
       (do (db/add-activity db data)
           (-> (r/response {:status :success}) (r/status 201)))
-      (-> (r/response (:error data)) (r/status 401)))))
+      (-> (r/response (:error data)) (r/status 400)))))
 
 (defn get-activities [db req]
   (let [query-params (-> req :params m/marshall-query-params)]
@@ -30,7 +30,7 @@
       (->> (db/fetch-activities db query-params)
            (map m/activity-to-json)
            (r/response))
-      (-> (r/response (:error query-params)) (r/status 401)))))
+      (-> (r/response (:error query-params)) (r/status 400)))))
 
 (defn handlers [db]
   {:add-activity    (partial add-activity db)
