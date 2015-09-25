@@ -43,17 +43,28 @@
 
 (def routes (load-routes-from-file "routes.txt"))
 
-(defn handler [db]
+(defn wrap-bearer-token [handler bearer-token]
+  (fn [request]
+
+    (let [request-method (:request-method request)
+          request-bearer-token (get-in request [:headers "bearer_token"])]
+      (cond
+        (= :get request-method) (handler request)
+        (= bearer-token request-bearer-token) (handler request)
+        :default {:status 401}))))
+
+(defn handler [db bearer-token]
   (-> (scenic-handler routes (handlers db) not-found-handler)
+      (wrap-bearer-token bearer-token)
       wrap-keyword-params
       wrap-params
       (wrap-json-body :keywords? false)
       (wrap-json-response)))
 
-(defn start-server [db host port]
-  (run-jetty (handler db) {:port port :host host}))
+(defn start-server [db host port bearer-token]
+  (run-jetty (handler db bearer-token) {:port port :host host}))
 
 (defn -main [& args]
   (prn "starting server...")
   (let [db (db/connect-to-db (c/mongo-uri))]
-    (start-server db (c/app-host) (c/app-port))))
+    (start-server db (c/app-host) (c/app-port) (c/bearer-token))))
