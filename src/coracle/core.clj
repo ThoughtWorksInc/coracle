@@ -1,6 +1,7 @@
 (ns coracle.core
   (:gen-class)
   (:require [scenic.routes :refer :all]
+            [clojure.tools.logging :as log]
             [ring.util.response :as r]
             [ring.middleware.defaults :as ring-defaults]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
@@ -18,6 +19,7 @@
   (->> req :body m/activity-from-json))
 
 (defn add-activity [db req]
+  (log/info "adding activity with request: " req)
   (let [data (activity-from-request req)]
     (if (empty? (:error data))
       (do (db/add-activity db data)
