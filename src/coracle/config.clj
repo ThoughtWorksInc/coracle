@@ -1,8 +1,8 @@
 (ns coracle.config
   (:require [environ.core :as e]))
 
-(defn app-port [] (Integer. (e/env :app-port)))
-(defn app-host [] (e/env :app-host))
+(defn app-port [] (Integer. (e/env :port)))
+(defn app-host [] (e/env :host))
 
 (defn mongo-port [] (e/env :mongo-port))
 

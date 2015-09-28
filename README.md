@@ -23,8 +23,8 @@ Note this assumes that you have a mongo container running with the name 'mongo'.
 
 The following optional environment variables can be passed into the docker container to configure the application.
 
-- ``` APP_HOST ``` - defaults to ```0.0.0.0```
-- ``` APP_PORT ``` - defaults to ```7000```
+- ``` HOST ``` - defaults to ```0.0.0.0```
+- ``` PORT ``` - defaults to ```7000```
 - ``` MONGO_PORT ``` - defaults to ```27017```
 - ``` MONGO_DB ``` - defaults to ```coracle```
 - ``` MONGO_URI ``` - defaults will take host and port to generate itself.

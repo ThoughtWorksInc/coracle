@@ -19,12 +19,12 @@
                                       [ring-mock "0.1.5"]]
                        :plugins      [[lein-midje "3.1.1"]
                                       [lein-environ "1.0.1"]]
-                       :env          {:app-host   "0.0.0.0"
-                                      :app-port   "8000"
+                       :env          {:host   "0.0.0.0"
+                                      :port   "8000"
                                       :mongo-host "localhost"
                                       :mongo-port "27017"
                                       :mongo-db   "coracle"}}
-             :docker  {:env {:app-host   "0.0.0.0"
-                             :app-port   "7000"
+             :docker  {:env {:host   "0.0.0.0"
+                             :port   "7000"
                              :mongo-port 27017
                              :mongo-db   "coracle"}}})
