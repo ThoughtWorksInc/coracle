@@ -27,6 +27,7 @@ The following optional environment variables can be passed into the docker conta
 - ``` APP_PORT ``` - defaults to ```7000```
 - ``` MONGO_PORT ``` - defaults to ```27017```
 - ``` MONGO_DB ``` - defaults to ```coracle```
+- ``` MONGO_URI ``` - defaults will take host and port to generate itself.
 - ``` BEARER_TOKEN ``` - defaults to ```nil```
 
 ### Using Bearer Token
