@@ -2,6 +2,7 @@
   (:gen-class)
   (:require [scenic.routes :refer :all]
             [ring.util.response :as r]
+            [ring.middleware.defaults :as ring-defaults]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.params :refer [wrap-params]]
@@ -61,9 +62,10 @@
 
 (defn handler [db bearer-token]
   (-> (scenic-handler routes (handlers db) not-found-handler)
+      (ring-defaults/wrap-defaults (if (c/secure?)
+                                     (assoc ring-defaults/secure-api-defaults :proxy true)
+                                     ring-defaults/api-defaults))
       (wrap-bearer-token bearer-token)
-      wrap-keyword-params
-      wrap-params
       (wrap-json-body :keywords? false)
       (wrap-json-response)))
 

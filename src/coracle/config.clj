@@ -23,3 +23,6 @@
 
 (defn bearer-token []
   (e/env :bearer-token))
+
+(defn secure? []
+  (= "true" (e/env :secure)))
