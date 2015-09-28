@@ -19,9 +19,7 @@
   (e/env :mongo-db))
 
 (defn mongo-uri []
-  (if-let [mongo-uri (e/env :mongo-uri)]
-    mongo-uri
-    (format "mongodb://%s:%s/%s" (mongo-host) (mongo-port) (mongo-db))))
+  (format "mongodb://%s:%s/%s" (mongo-host) (mongo-port) (mongo-db)))
 
 (defn bearer-token []
   (e/env :bearer-token))
