@@ -37,9 +37,15 @@
            (r/response))
       (-> (r/response (:error query-params)) (r/status 400)))))
 
+
+(defn ping [request]
+  (-> (r/response "pong")
+      (r/content-type "text/plain")))
+
 (defn handlers [db]
   {:add-activity    (partial add-activity db)
-   :show-activities (partial get-activities db)})
+   :show-activities (partial get-activities db)
+   :ping            ping})
 
 (def routes (load-routes-from-file "routes.txt"))
 
