@@ -10,6 +10,15 @@
            (db/add-activity db {"@actor" "Jerome Flynn"})
            (db/fetch-activities db {}) => [{"@actor" "Jerome Flynn"}])))
 
+(fact "cannot store duplicate activities"
+      (h/with-db-do
+        (fn [db]
+          (db/fetch-activities db {}) => []
+          (db/add-activity db {"@actor" "Jerome Flynn"})
+          (db/add-activity db {"@actor" "Jerome Flynn"})
+          (db/fetch-activities db {}) => [{"@actor" "Jerome Flynn"}])))
+
+
 (defn build-activity [timestamp actor]
   {"@actor" actor
    "@published" timestamp})

@@ -11,7 +11,8 @@
       :db))
 
 (defn add-activity [db activity]
-  (mc/insert db coll activity))
+  (when-not (mc/find-one db coll activity)
+    (mc/insert db coll activity)))
 
 (defn assoc-in-query [m map-path value]
   (if value

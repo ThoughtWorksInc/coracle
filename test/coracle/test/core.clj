@@ -31,6 +31,15 @@
              (-> (test-handler request) :status) => 201
              (first (db/fetch-activities test-db {})) => (contains {"@actor" "dave"})))))
 
+(fact "cannot store duplicate activities"
+      (h/with-db-do
+        (fn [test-db]
+          (let [test-handler (handler test-db nil)
+                request (post-json "/activities" (activity-json "dave" timestamp))]
+            (-> (test-handler request) :status) => 201
+            (-> (test-handler request) :status) => 201
+            (count (db/fetch-activities test-db {})) => 1))))
+
 (facts "about wrap bearer token"
        (let [handler (fn [req] :some-handler-response)
              wrapped-handler (wrap-bearer-token handler "secret")]
