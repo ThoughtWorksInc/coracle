@@ -1,6 +1,7 @@
 (ns coracle.db
   (:require [monger.collection :as mc]
             [monger.core :as m]
+            [monger.operators :as mop]
             [monger.joda-time :as jt]                       ;; required for joda integration
             [clojure.walk :refer [stringify-keys]]))
 
@@ -30,3 +31,9 @@
       (mc/find-maps db coll query)
       (map #(dissoc % :_id))
       stringify-keys)))
+
+(defn fetch-latest-published-activity [db]
+  (->> (mc/aggregate db coll [{mop/$sort {"@published" -1}}])
+      (map #(dissoc % :_id))
+      stringify-keys
+      first))

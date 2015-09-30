@@ -1,3 +1,4 @@
-POST /activities add-activity
-GET  /activities show-activities
-GET  /ping       ping
+POST /activities                    add-activity
+GET  /activities                    show-activities
+GET  /ping                          ping
+GET  /latest-published-timestamp    latest-published-timestamp

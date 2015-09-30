@@ -16,8 +16,7 @@
   (if (map? activity)
     (-> activity
         (coerce-time ["@published"] false))
-    {:error "invalid-json"}
-    ))
+    {:error "invalid-json"}))
 
 (defn activity-to-json [activity]
   (-> activity

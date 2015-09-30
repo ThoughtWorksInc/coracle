@@ -45,3 +45,12 @@
                nil         date2      #{1}
                nil         date1      #{}
                date1       date3      #{2})))))
+
+(fact "Can retrieve the most recently published activity"
+      (h/with-db-do
+        (fn [db]
+          (let [old-activity (build-activity 100 1)
+                newest-activity (build-activity 200 2)]
+            (db/add-activity db old-activity)
+            (db/add-activity db newest-activity)
+            (db/fetch-latest-published-activity db) => (just newest-activity)))))

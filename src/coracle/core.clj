@@ -49,10 +49,16 @@
   (-> (r/response "pong")
       (r/content-type "text/plain")))
 
+(defn latest-published-timestamp [db request]
+  (let [latest-published-activity (m/activity-to-json (db/fetch-latest-published-activity db))]
+    (-> (r/response {:latest-published-timestamp (published latest-published-activity)})
+        (r/content-type "application/json"))))
+
 (defn handlers [db]
-  {:add-activity    (partial add-activity db)
-   :show-activities (partial get-activities db)
-   :ping            ping})
+  {:add-activity               (partial add-activity db)
+   :show-activities            (partial get-activities db)
+   :ping                       ping
+   :latest-published-timestamp (partial latest-published-timestamp db)})
 
 (def routes (load-routes-from-file "routes.txt"))
 

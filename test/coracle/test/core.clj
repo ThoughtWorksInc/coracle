@@ -64,7 +64,7 @@
             request (-> (post-json "/activities" nil)
                         (assoc :headers {"bearer_token" "invalid"}))
             response (test-handler request)]
-            (-> response :status) => 401))
+        (-> response :status) => 401))
 
 (fact "Get 400 error if json is invalid"
       (h/with-db-do
@@ -115,4 +115,14 @@
                (:status response) => 400
                (get-in response [:headers "Content-Type"]) => "application/json; charset=utf-8")))))
 
-
+(facts "can get last published activity time-stamp"
+       (h/with-db-do
+         (fn [test-db]
+           (let [test-handler (handler test-db nil)
+                 d1 (t/now)
+                 d2 (t/plus (t/now) (t/weeks 1))]
+             (db/add-activity test-db (db-activity "tofu" d1))
+             (db/add-activity test-db (db-activity "bloob" d2))
+             (let [response (test-handler (r/request :get "/latest-published-timestamp"))]
+               (:status response) => 200
+               (->> response :body json/parse-string) => {"latest-published-timestamp" (.toString d2)})))))
