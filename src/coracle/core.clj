@@ -12,6 +12,10 @@
             [coracle.db :as db]
             [coracle.marshaller :as m]))
 
+(defn activity-response [b]
+  (-> (r/response b)
+      (r/content-type "application/activity+json")))
+
 (defn not-found-handler [req]
   (-> (r/response {:error "not found"}) (r/status 404)))
 
@@ -37,7 +41,7 @@
       (->> (db/fetch-activities db query-params)
            (sort-by published descending)
            (map m/activity-to-json)
-           (r/response))
+           (activity-response))
       (-> (r/response (:error query-params)) (r/status 400)))))
 
 
@@ -64,12 +68,12 @@
 
 (defn handler [db bearer-token]
   (-> (scenic-handler routes (handlers db) not-found-handler)
+      (wrap-json-response)
       (ring-defaults/wrap-defaults (if (c/secure?)
                                      (assoc ring-defaults/secure-api-defaults :proxy true)
                                      ring-defaults/api-defaults))
       (wrap-bearer-token bearer-token)
-      (wrap-json-body :keywords? false)
-      (wrap-json-response)))
+      (wrap-json-body :keywords? false)))
 
 (defn start-server [db host port bearer-token]
   (run-jetty (handler db bearer-token) {:port port :host host}))

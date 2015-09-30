@@ -73,7 +73,9 @@
              (db/add-activity test-db (activity-json "dave" timestamp))
              (let [response (test-handler request)]
                (fact
-                 (-> response :body json/parse-string) => [(activity-json "dave" timestamp)]))))))
+                 (-> response :body json/parse-string) => [(activity-json "dave" timestamp)]
+                 (get-in response [:headers "Content-Type"]) => "application/activity+json"
+                 ))))))
 
 (facts "Can load json activitites"
        (h/with-db-do
@@ -101,6 +103,7 @@
                  request (r/request :get (format "/activities?from=blah&to=blah"))]
              (db/add-activity test-db (db-activity "blah" (t/now)))
              (let [response (test-handler request)]
-               (:status response) => 400)))))
+               (:status response) => 400
+               (get-in response [:headers "Content-Type"]) => "application/json; charset=utf-8")))))
 
 
