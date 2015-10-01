@@ -23,10 +23,10 @@
                                       [lein-environ "1.0.1"]]
                        :env          {:host   "0.0.0.0"
                                       :port   "8000"
-                                      :mongo-host "localhost"
-                                      :mongo-port "27017"
-                                      :mongo-db   "coracle"}}
+                                      :mongodb-host "localhost"
+                                      :mongodb-port "27017"
+                                      :mongodb-db   "coracle"}}
              :docker  {:env {:host   "0.0.0.0"
                              :port   "7000"
-                             :mongo-port 27017
-                             :mongo-db   "coracle"}}})
+                             :mongodb-port "27017"
+                             :mongodb-db   "coracle"}}})

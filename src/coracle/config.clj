@@ -4,16 +4,18 @@
 (defn app-port [] (Integer. (e/env :port)))
 (defn app-host [] (e/env :host))
 
-(defn mongo-port [] (e/env :mongo-port))
+(defn mongo-port [] (e/env :mongodb-port))
 
 (defn mongo-container-tcp [port]
   (let [k (-> (format "mongo-port-%s-tcp-addr" port) keyword)]
     (e/env k)))
 
 (defn mongo-host []
-  (if-let [host (e/env :mongo-host)]
+  (if-let [host (e/env :mongodb-host)]
     host
-    (mongo-container-tcp (mongo-port))))
+    (if-let [h (mongo-container-tcp (mongo-port))]
+      h
+      (throw (Exception. "Host not specified, and environment variable with linked container host cannot be found.")))))
 
 (defn mongo-db []
   (e/env :mongo-db))
