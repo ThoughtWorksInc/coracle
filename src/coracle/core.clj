@@ -50,8 +50,12 @@
       (r/content-type "text/plain")))
 
 (defn latest-published-timestamp [db request]
-  (let [latest-published-activity (m/activity-to-json (db/fetch-latest-published-activity db))]
-    (-> (r/response {:latest-published-timestamp (published latest-published-activity)})
+  (let [latest-published-activity (db/fetch-latest-published-activity db)
+        jsonified-activity (m/activity-to-json latest-published-activity)
+        response-body (if latest-published-activity
+                        {:latest-published-timestamp (published jsonified-activity)}
+                        {})]
+    (-> (r/response response-body)
         (r/content-type "application/json"))))
 
 (defn handlers [db]
