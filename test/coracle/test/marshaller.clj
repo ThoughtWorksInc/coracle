@@ -12,14 +12,14 @@
   (fact
     (v/activity-from-json  ?activity) => ?output)
   ?activity                             ?output
-  {}                                    {:error {"@published" "not-present"}}
-  {"@published" "blah"}                 {"@published" "blah"
-                                         :error {"@published" "invalid"}}
-  {"@published" valid-timestamp-str}    {"@published" valid-timestamp-long}
+  {}                                    {:error {"published" "not-present"}}
+  {"published" "blah"}                 {"published" "blah"
+                                         :error {"published" "invalid"}}
+  {"published" valid-timestamp-str}    {"published" valid-timestamp-long}
   )
 
 (fact "can convert back to original format"
-  (let [original {"@published" valid-timestamp-str}]
+  (let [original {"published" valid-timestamp-str}]
     (-> original v/activity-from-json v/activity-to-json) => original))
 
 (tabular

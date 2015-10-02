@@ -15,12 +15,12 @@
 (defn activity-from-json [activity]
   (if (map? activity)
     (-> activity
-        (coerce-time ["@published"] false))
+        (coerce-time ["published"] false))
     {:error "invalid-json"}))
 
 (defn activity-to-json [activity]
   (-> activity
-      (update-in ["@published"] (comp str tc/from-long))))
+      (update-in ["published"] (comp str tc/from-long))))
 
 (defn remove-nil-values [m]
   (->> m

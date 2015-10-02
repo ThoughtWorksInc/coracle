@@ -7,21 +7,21 @@
        (h/with-db-do
          (fn [db]
            (db/fetch-activities db {}) => []
-           (db/add-activity db {"@actor" "Jerome Flynn"})
-           (db/fetch-activities db {}) => [{"@actor" "Jerome Flynn"}])))
+           (db/add-activity db {"actor" "Jerome Flynn"})
+           (db/fetch-activities db {}) => [{"actor" "Jerome Flynn"}])))
 
 (fact "cannot store duplicate activities"
       (h/with-db-do
         (fn [db]
           (db/fetch-activities db {}) => []
-          (db/add-activity db {"@actor" "Jerome Flynn"})
-          (db/add-activity db {"@actor" "Jerome Flynn"})
-          (db/fetch-activities db {}) => [{"@actor" "Jerome Flynn"}])))
+          (db/add-activity db {"actor" "Jerome Flynn"})
+          (db/add-activity db {"actor" "Jerome Flynn"})
+          (db/fetch-activities db {}) => [{"actor" "Jerome Flynn"}])))
 
 
 (defn build-activity [timestamp actor]
-  {"@actor" actor
-   "@published" timestamp})
+  {"actor" actor
+   "published" timestamp})
 
 (facts "Can retrieve all activities in between dates"
        (h/with-db-do
@@ -35,7 +35,7 @@
              (tabular
                (fact
                  (let [result (db/fetch-activities db {:from ?from :to ?to})]
-                   (->> result (map #(get % "@actor")) set) => ?result))
+                   (->> result (map #(get % "actor")) set) => ?result))
                ?from       ?to        ?result
                nil         nil        #{1 2 3}
                date1       nil        #{2 3}

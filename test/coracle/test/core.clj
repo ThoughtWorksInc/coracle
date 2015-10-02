@@ -14,12 +14,12 @@
     (assoc :body params)))
 
 (defn activity-json [actor published]
-  {"@actor"     actor
-   "@published" (str published)})
+  {"actor"     actor
+   "published" (str published)})
 
 (defn db-activity [actor published]
-  {"@actor"     actor
-   "@published" (tc/to-long published)})
+  {"actor"     actor
+   "published" (tc/to-long published)})
 
 (def timestamp (t/now))
 
@@ -29,7 +29,7 @@
            (let [test-handler (handler test-db nil)
                  request (post-json "/activities" (activity-json "dave" timestamp))]
              (-> (test-handler request) :status) => 201
-             (first (db/fetch-activities test-db {})) => (contains {"@actor" "dave"})))))
+             (first (db/fetch-activities test-db {})) => (contains {"actor" "dave"})))))
 
 (fact "cannot store duplicate activities"
       (h/with-db-do

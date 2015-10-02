@@ -32,7 +32,7 @@
 
 (def descending #(compare %2 %1))
 
-(def published #(get % "@published"))
+(def published #(get % "published"))
 
 (defn get-activities [db req]
   (let [query-params (-> req :params m/marshall-query-params)]
