@@ -80,17 +80,17 @@
 
 (defn handler [db bearer-token]
   (-> (scenic-handler routes (handlers db) not-found-handler)
+      (wrap-bearer-token bearer-token)
       (wrap-json-response)
       (ring-defaults/wrap-defaults (if (c/secure?)
                                      (assoc ring-defaults/secure-api-defaults :proxy true)
                                      ring-defaults/api-defaults))
-      (wrap-bearer-token bearer-token)
       (wrap-json-body :keywords? false)))
 
 (defn start-server [db host port bearer-token]
   (run-jetty (handler db bearer-token) {:port port :host host}))
 
 (defn -main [& args]
-  (prn "starting server...")
+  (prn (format "starting server... (with bearer token %s)" (c/bearer-token)))
   (let [db (db/connect-to-db (c/mongo-uri))]
     (start-server db (c/app-host) (c/app-port) (c/bearer-token))))
