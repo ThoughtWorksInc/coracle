@@ -74,9 +74,10 @@
       (cond
         (= :get request-method) (handler request)
         (= bearer-token request-bearer-token) (handler request)
-        :default (-> (r/response {:error "unauthorised"})
-                     (r/content-type "application/json")
-                     (r/status 401))))))
+        :default (do (log/warn "Unauthorised request with bearer_token [%s]" request-bearer-token)
+                     (-> (r/response {:error "unauthorised"})
+                         (r/content-type "application/json")
+                         (r/status 401)))))))
 
 (defn handler [db bearer-token]
   (-> (scenic-handler routes (handlers db) not-found-handler)
@@ -91,6 +92,6 @@
   (run-jetty (handler db bearer-token) {:port port :host host}))
 
 (defn -main [& args]
-  (prn (format "starting server... (with bearer token %s)" (c/bearer-token)))
+  (prn (format "starting server... (with bearer token [%s])" (c/bearer-token)))
   (let [db (db/connect-to-db (c/mongo-uri))]
     (start-server db (c/app-host) (c/app-port) (c/bearer-token))))
