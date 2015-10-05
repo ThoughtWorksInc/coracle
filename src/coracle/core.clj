@@ -74,7 +74,9 @@
       (cond
         (= :get request-method) (handler request)
         (= bearer-token request-bearer-token) (handler request)
-        :default {:status 401}))))
+        :default (-> (r/response {:error "unauthorised"})
+                     (r/content-type "application/json")
+                     (r/status 401))))))
 
 (defn handler [db bearer-token]
   (-> (scenic-handler routes (handlers db) not-found-handler)
