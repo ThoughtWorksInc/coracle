@@ -51,18 +51,18 @@
 
          (fact "POST requests with a valid bearer token calls handler on request"
                (let [request (-> (post-json "/activities" nil)
-                                 (assoc :headers {"bearer_token" "secret"}))]
+                                 (assoc :headers {"bearer-token" "secret"}))]
                  (wrapped-handler request) => :some-handler-response))
 
          (fact "POST requests with a invalid bearer token return a 401 response"
                (let [request (-> (post-json "/activities" nil)
-                                 (assoc :headers {"bearer_token" "WRONG"}))]
+                                 (assoc :headers {"bearer-token" "WRONG"}))]
                  (wrapped-handler request) => (contains {:status 401})))))
 
 (fact "Get 401 if bearer token is invalid"
       (let [test-handler (handler nil nil)
             request (-> (post-json "/activities" nil)
-                        (assoc :headers {"bearer_token" "invalid"}))
+                        (assoc :headers {"bearer-token" "invalid"}))
             response (test-handler request)]
         (-> response :status) => 401))
 
@@ -105,7 +105,7 @@
                    (let [request (r/request :get (format "/activities?from=%s&to=%s" d1 d3))]
                      (-> request test-handler :body json/parse-string) => [(activity-json "bloob" d2)]))))))
 
-(facts "Invalid query parameters return 401"
+(facts "Invalid query parameters return 400"
        (h/with-db-do
          (fn [test-db]
            (let [test-handler (handler test-db nil)

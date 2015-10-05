@@ -70,11 +70,11 @@
   (fn [request]
 
     (let [request-method (:request-method request)
-          request-bearer-token (get-in request [:headers "bearer_token"])]
+          request-bearer-token (get-in request [:headers "bearer-token"])]
       (cond
         (= :get request-method) (handler request)
         (= bearer-token request-bearer-token) (handler request)
-        :default (do (log/warn "Unauthorised request with bearer_token [%s]" request-bearer-token)
+        :default (do (log/warn "Unauthorised request with bearer-token [%s]" request-bearer-token)
                      (-> (r/response {:error "unauthorised"})
                          (r/content-type "application/json")
                          (r/status 401)))))))
@@ -92,6 +92,5 @@
   (run-jetty (handler db bearer-token) {:port port :host host}))
 
 (defn -main [& args]
-  (prn (format "starting server... (with bearer token [%s])" (c/bearer-token)))
   (let [db (db/connect-to-db (c/mongo-uri))]
     (start-server db (c/app-host) (c/app-port) (c/bearer-token))))
