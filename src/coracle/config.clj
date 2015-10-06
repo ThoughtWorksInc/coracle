@@ -1,30 +1,38 @@
 (ns coracle.config
   (:require [environ.core :as e]))
 
-(defn app-port [] (Integer. (e/env :port)))
-(defn app-host [] (e/env :host))
+(defn get-env
+  ([env-key default]
+   (if-let [v (get e/env env-key default)]
+     v
+     (throw (Exception. "No value supplied for key [%s] and no default provided"))))
+  ([env-key]
+    (get-env env-key nil)))
 
-(defn mongo-port [] (e/env :mongodb-port))
+(defn app-port [] (Integer. (get-env :port)))
+(defn app-host [] (get-env :host))
+
+(defn mongo-port [] (get-env :mongodb-port))
 
 (defn mongo-container-tcp [port]
   (let [k (-> (format "mongo-port-%s-tcp-addr" port) keyword)]
-    (e/env k)))
+    (get-env k)))
 
 (defn mongo-host []
-  (if-let [host (e/env :mongodb-host)]
+  (if-let [host (get-env :mongodb-host)]
     host
     (if-let [h (mongo-container-tcp (mongo-port))]
       h
       (throw (Exception. "Host not specified, and environment variable with linked container host cannot be found.")))))
 
 (defn mongo-db []
-  (e/env :mongo-db))
+  (get-env :mongo-db))
 
 (defn mongo-uri []
   (format "mongodb://%s:%s/%s" (mongo-host) (mongo-port) (mongo-db)))
 
 (defn bearer-token []
-  (e/env :bearer-token))
+  (get-env :bearer-token ""))
 
 (defn secure? []
-  (= "true" (e/env :secure)))
+  (= "true" (get-env :secure "false")))
