@@ -1,9 +1,11 @@
 (ns coracle.config
   (:require [environ.core :as e]))
 
+(def environment e/env)
+
 (defn get-required
   ([env-key default]
-   (if-let [v (get e/env env-key default)]
+   (if-let [v (get environment env-key default)]
      v
      (throw (Exception. (format "No value supplied for key [%s] and no default provided" env-key)))))
   ([env-key]
@@ -16,17 +18,17 @@
 
 (defn mongo-container-tcp [port]
   (let [k (-> (format "mongo-port-%s-tcp-addr" port) keyword)]
-    (k e/env)))
+    (k environment)))
 
 (defn mongo-host []
-  (if-let [host (:mongodb-host e/env)]
+  (if-let [host (:mongodb-host environment)]
     host
     (if-let [h (mongo-container-tcp (mongo-port))]
       h
       (throw (Exception. "Host not specified, and environment variable with linked container host cannot be found.")))))
 
 (defn mongo-db []
-  (get-required :mongo-db))
+  (get-required :mongodb-db))
 
 (defn mongo-uri []
   (format "mongodb://%s:%s/%s" (mongo-host) (mongo-port) (mongo-db)))
