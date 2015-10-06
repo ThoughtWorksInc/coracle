@@ -3,7 +3,7 @@
             [clj-time.core :as t]
             [cheshire.core :as json]
             [coracle.jws :as jws])
-  (:import [org.jose4j.jwk RsaJsonWebKey]))
+  (:import [org.jose4j.jwk RsaJsonWebKey JsonWebKey$Factory]))
 
 (fact "can generate a key pair"
       (let [key-pair (jws/generate-key-pair "some-key-id")]
@@ -26,3 +26,14 @@
         (-> (json/parse-string jwks) (get "keys") first (get "kid")) => key-id))
 
 
+(defn decode [response]
+  )
+
+(future-fact "jws response generator can sign responses"
+      (let [key-pair (-> (slurp "./test-resources/test-key.json") JsonWebKey$Factory/newJwk)
+            jws-response-generator (jws/jws-response-generator key-pair)
+            json-payload "{\"hello\": \"rob\"}"
+            jws-response (jws-response-generator json-payload)
+            decoded-response (decode jws-response)]
+
+        (get decoded-response "payload") => json-payload))

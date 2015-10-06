@@ -16,3 +16,6 @@
 (defn json-web-key->json-web-key-set [json-web-key]
   (.toJson (JsonWebKeySet. [json-web-key])))
 
+(defn jws-response-generator [key-pair]
+  identity
+  )
