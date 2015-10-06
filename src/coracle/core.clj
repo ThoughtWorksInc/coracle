@@ -10,7 +10,8 @@
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [coracle.config :as c]
             [coracle.db :as db]
-            [coracle.marshaller :as m]))
+            [coracle.marshaller :as m]
+            [coracle.jws :as jws]))
 
 (defn activity-response [b]
   (-> (r/response b)
@@ -93,9 +94,10 @@
                                      ring-defaults/api-defaults))
       (wrap-json-body :keywords? false)))
 
-(defn start-server [db host port bearer-token]
-  (run-jetty (handler db bearer-token nil) {:port port :host host}))
+(defn start-server [db host port bearer-token json-web-key-set]
+  (run-jetty (handler db bearer-token json-web-key-set) {:port port :host host}))
 
 (defn -main [& args]
-  (let [db (db/connect-to-db (c/mongo-uri))]
-    (start-server db (c/app-host) (c/app-port) (c/bearer-token))))
+  (let [db (db/connect-to-db (c/mongo-uri))
+        json-web-key-set (-> (jws/generate-key-id) jws/generate-key-pair jws/json-web-key->json-web-key-set)]
+    (start-server db (c/app-host) (c/app-port) (c/bearer-token) json-web-key-set)))
