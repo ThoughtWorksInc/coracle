@@ -2,7 +2,6 @@
   (:require [monger.collection :as mc]
             [monger.core :as m]
             [monger.operators :as mop]
-            [monger.joda-time :as jt]                       ;; required for joda integration
             [clojure.walk :refer [stringify-keys]]))
 
 (def coll "activities")

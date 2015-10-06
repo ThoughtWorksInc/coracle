@@ -20,7 +20,7 @@
   (-> (r/response {:error "not found"}) (r/status 404)))
 
 (defn activity-from-request [req]
-  (->> req :body m/activity-from-json))
+  (->> req :body m/validate-and-parse-activity))
 
 (defn add-activity [db req]
   (log/info "adding activity with request: " req)
@@ -40,7 +40,7 @@
     (if (empty? (:error query-params))
       (->> (db/fetch-activities db query-params)
            (sort-by published descending)
-           (map m/activity-to-json)
+           (map m/stringify-activity-timestamp)
            (activity-response))
       (-> (r/response (:error query-params)) (r/status 400)))))
 
@@ -51,7 +51,7 @@
 
 (defn latest-published-timestamp [db request]
   (let [latest-published-activity (db/fetch-latest-published-activity db)
-        jsonified-activity (m/activity-to-json latest-published-activity)
+        jsonified-activity (m/stringify-activity-timestamp latest-published-activity)
         response-body (if latest-published-activity
                         {:latest-published-timestamp (published jsonified-activity)}
                         {})]

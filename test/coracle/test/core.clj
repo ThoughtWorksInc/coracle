@@ -15,11 +15,13 @@
 
 (defn activity-json [actor published]
   {"actor"     actor
-   "published" (str published)})
+   "published" (str published)
+   "@type"     "create"})
 
 (defn db-activity [actor published]
   {"actor"     actor
-   "published" (tc/to-long published)})
+   "published" (tc/to-long published)
+   "@type"     "create"})
 
 (def timestamp (t/now))
 
@@ -83,8 +85,7 @@
              (let [response (test-handler request)]
                (fact
                  (-> response :body json/parse-string) => [(activity-json "dave" timestamp)]
-                 (get-in response [:headers "Content-Type"]) => "application/activity+json"
-                 ))))))
+                 (get-in response [:headers "Content-Type"]) => "application/activity+json"))))))
 
 (facts "Can load json activitites"
        (h/with-db-do
@@ -135,3 +136,4 @@
                    (let [response (test-handler (r/request :get "/latest-published-timestamp"))]
                      (:status response) => 200
                      (->> response :body json/parse-string) => {}))))))
+
