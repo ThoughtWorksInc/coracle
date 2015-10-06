@@ -14,11 +14,13 @@
                  [com.novemberain/monger "3.0.0-rc2"]
                  [environ "1.0.1"]
                  [clj-time "0.11.0"]
-                 [prismatic/schema "1.0.1"]]
+                 [prismatic/schema "1.0.1"]
+                 [org.bitbucket.b_c/jose4j "0.4.4"]]
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}
              :dev     {:dependencies [[midje "1.6.3"]
-                                      [ring-mock "0.1.5"]]
+                                      [ring-mock "0.1.5"]
+                                      [kerodon "0.7.0"]]
                        :plugins      [[lein-midje "3.1.1"]
                                       [lein-environ "1.0.1"]]
                        :env          {:host   "0.0.0.0"

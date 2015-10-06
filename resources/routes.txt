@@ -2,3 +2,4 @@ POST /activities                    add-activity
 GET  /activities                    show-activities
 GET  /ping                          ping
 GET  /latest-published-timestamp    latest-published-timestamp
+GET  /jwk-set                       jwk-set

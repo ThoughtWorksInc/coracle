@@ -49,6 +49,10 @@
   (-> (r/response "pong")
       (r/content-type "text/plain")))
 
+(defn jwk-set [json-web-key-set request]
+  (-> (r/response json-web-key-set)
+      (r/content-type "application/json")))
+
 (defn latest-published-timestamp [db request]
   (let [latest-published-activity (db/fetch-latest-published-activity db)
         jsonified-activity (m/stringify-activity-timestamp latest-published-activity)
@@ -58,11 +62,12 @@
     (-> (r/response response-body)
         (r/content-type "application/json"))))
 
-(defn handlers [db]
+(defn handlers [db json-web-key-set]
   {:add-activity               (partial add-activity db)
    :show-activities            (partial get-activities db)
    :ping                       ping
-   :latest-published-timestamp (partial latest-published-timestamp db)})
+   :latest-published-timestamp (partial latest-published-timestamp db)
+   :jwk-set                    (partial jwk-set json-web-key-set) })
 
 (def routes (load-routes-from-file "routes.txt"))
 
@@ -79,8 +84,8 @@
                          (r/content-type "application/json")
                          (r/status 401)))))))
 
-(defn handler [db bearer-token]
-  (-> (scenic-handler routes (handlers db) not-found-handler)
+(defn handler [db bearer-token json-web-key-set]
+  (-> (scenic-handler routes (handlers db json-web-key-set) not-found-handler)
       (wrap-bearer-token bearer-token)
       (wrap-json-response)
       (ring-defaults/wrap-defaults (if (c/secure?)
@@ -89,7 +94,7 @@
       (wrap-json-body :keywords? false)))
 
 (defn start-server [db host port bearer-token]
-  (run-jetty (handler db bearer-token) {:port port :host host}))
+  (run-jetty (handler db bearer-token nil) {:port port :host host}))
 
 (defn -main [& args]
   (let [db (db/connect-to-db (c/mongo-uri))]
