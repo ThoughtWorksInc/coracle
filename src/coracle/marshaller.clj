@@ -15,7 +15,7 @@
     (cond
       (nil? type) (assoc-in activity [:error "@type"] "not-present")
       (not (string? type)) (assoc-in activity [:error "@type"] "invalid")
-      (empty? type) (assoc-in activity [:error "@type"] "invalid")
+      (clojure.string/blank? type) (assoc-in activity [:error "@type"] "invalid")
       :else activity)))
 
 (defn validate-and-parse-activity [activity]

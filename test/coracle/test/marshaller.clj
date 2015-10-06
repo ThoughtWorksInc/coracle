@@ -19,6 +19,11 @@
                                          "@type" ""
                                          :error {"published" "invalid"
                                                  "@type" "invalid"}}
+  {"published" "blah"
+   "@type" "\t "}                       {"published" "blah"
+                                         "@type" "\t "
+                                         :error {"published" "invalid"
+                                                 "@type" "invalid"}}
   {"published" valid-timestamp-str
    "@type" 123}                         {"published" valid-timestamp-long
                                          "@type" 123
