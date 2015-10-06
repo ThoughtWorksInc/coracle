@@ -7,11 +7,11 @@
   (doto (RsaJwkGenerator/generateJwk 2048)
     (.setKeyId key-id)))
 
-(defn now-in-millis [now]
-  (-> now c/to-long str))
+(defn in-millis [time]
+  (-> time c/to-long str))
 
 (defn generate-key-id []
-  (str "key-" (now-in-millis (t/now))))
+  (str "key-" (in-millis (t/now))))
 
 (defn json-web-key->json-web-key-set [json-web-key]
   (.toJson (JsonWebKeySet. [json-web-key])))

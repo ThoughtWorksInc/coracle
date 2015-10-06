@@ -14,10 +14,10 @@
 (fact "can generate a key ID"
       (jws/generate-key-id) => "key-1234"
       (provided
-        (jws/now-in-millis anything) => "1234"))
+        (jws/in-millis anything) => "1234"))
 
-(fact "now-in-millis returns unix epoch milliseconds as a string"
-      (jws/now-in-millis "2015-10-06") => "1444089600000")
+(fact "in-millis returns unix epoch milliseconds as a string"
+      (jws/in-millis "2015-10-06") => "1444089600000")
 
 (fact "json-web-key->json-web-key-set generates a json-web-key-set as a json string"
       (let [key-id "some-key-id"
