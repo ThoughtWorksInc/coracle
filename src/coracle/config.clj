@@ -5,7 +5,7 @@
   ([env-key default]
    (if-let [v (get e/env env-key default)]
      v
-     (throw (Exception. "No value supplied for key [%s] and no default provided"))))
+     (throw (Exception. (format "No value supplied for key [%s] and no default provided" env-key)))))
   ([env-key]
     (get-env env-key nil)))
 
@@ -16,7 +16,7 @@
 
 (defn mongo-container-tcp [port]
   (let [k (-> (format "mongo-port-%s-tcp-addr" port) keyword)]
-    (get-env k)))
+    (k e/env)))
 
 (defn mongo-host []
   (if-let [host (get-env :mongodb-host)]
