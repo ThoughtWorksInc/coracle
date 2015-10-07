@@ -24,7 +24,7 @@ The following environment variables can be passed into the docker container to c
 
 ##### Required:
 
-- `BEARER_TOKEN` -  The app will not start without it. Only POST requests that have a matching token in the HTTP header (e.g. "bearer-token" "123") are permitted.
+- **BEARER_TOKEN** -  The app will not start without it. Only POST requests that have a matching token in the HTTP header (e.g. "bearer-token" "123") are permitted.
    
 ##### Optional:
 
