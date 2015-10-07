@@ -99,5 +99,5 @@
 
 (defn -main [& args]
   (let [db (db/connect-to-db (c/mongo-uri))
-        json-web-key-set (-> (jws/generate-key-id) jws/generate-key-pair jws/json-web-key->json-web-key-set)]
+        json-web-key-set (-> (jws/generate-key-id) jws/generate-json-web-key jws/json-web-key->json-web-key-set)]
     (start-server db (c/app-host) (c/app-port) (c/bearer-token) json-web-key-set)))
