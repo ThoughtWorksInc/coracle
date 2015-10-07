@@ -34,7 +34,7 @@
   (format "mongodb://%s:%s/%s" (mongo-host) (mongo-port) (mongo-db)))
 
 (defn bearer-token []
-  (get-required :bearer-token ""))
+  (get-required :bearer-token))
 
 (defn secure? []
   (= "true" (get-required :secure "false")))

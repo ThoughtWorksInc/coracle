@@ -58,8 +58,9 @@
   (run-jetty (handler db bearer-token json-web-key-set jws-generator) {:port port :host host}))
 
 (defn -main [& _]
-  (let [db (db/connect-to-db (c/mongo-uri))
+  (let [bearer-token (c/bearer-token)
+        db (db/connect-to-db (c/mongo-uri))
         json-web-key (jws/generate-json-web-key (jws/generate-key-id))
         json-web-key-set (jws/json-web-key->json-web-key-set json-web-key)
         jws-generator (jws/jws-generator json-web-key)]
-    (start-server db (c/app-host) (c/app-port) (c/bearer-token) json-web-key-set jws-generator)))
+    (start-server db (c/app-host) (c/app-port) bearer-token json-web-key-set jws-generator)))
