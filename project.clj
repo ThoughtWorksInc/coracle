@@ -15,7 +15,8 @@
                  [environ "1.0.1"]
                  [clj-time "0.11.0"]
                  [prismatic/schema "1.0.1"]
-                 [org.bitbucket.b_c/jose4j "0.4.4"]]
+                 [org.bitbucket.b_c/jose4j "0.4.4"]
+                 [org.slf4j/slf4j-simple "1.7.12"]]
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}
              :dev     {:dependencies [[midje "1.6.3"]

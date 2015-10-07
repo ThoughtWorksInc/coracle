@@ -90,13 +90,12 @@
 
 (defn wrap-bearer-token [handler bearer-token]
   (fn [request]
-
     (let [request-method (:request-method request)
           request-bearer-token (get-in request [:headers "bearer-token"])]
       (cond
         (= :get request-method) (handler request)
         (= bearer-token request-bearer-token) (handler request)
-        :default (do (log/warn "Unauthorised request with bearer-token [%s]" request-bearer-token)
+        :default (do (log/warn (format "Unauthorised request with bearer-token [%s]" request-bearer-token))
                      (-> (r/response {:error "unauthorised"})
                          (r/content-type "application/json")
                          (r/status 401)))))))
