@@ -28,8 +28,8 @@ The following environment variables can be passed into the docker container to c
    
 ##### Optional:
 
-- `HOST` - defaults to `0.0.0.0`
-- `PORT` - defaults to `7000`
-- `MONGO_PORT` - defaults to `27017`
-- `MONGO_DB` - defaults to `coracle`
-- `SECURE` - defaults to `nil` - When set to `true` this will wrap the app with middleware that enforces https-only connections.
+- **HOST** - defaults to **0.0.0.0**
+- **PORT** - defaults to **7000**
+- **MONGO_PORT** - defaults to **27017**
+- **MONGO_DB** - defaults to **coracle**
+- **SECURE** - defaults to **nil** - When set to **true** this will wrap the app with middleware that enforces https-only connections.
