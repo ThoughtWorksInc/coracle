@@ -122,14 +122,14 @@
                          response (test-handler request)]
                      (fact "the correct content-type is used"
                            (-> response :headers (get "Content-Type")) => "application/jose+json")
-                     (fact "response includes jku header with absolute path of jwk-set"
-                           (-> response :headers (get "jku")) => external-jwk-set-url)
 
-
-                     (let [jws-signed-payload (-> response :body json/parse-string (get "jws-signed-payload"))]
-                       (fact "the body contains the jws-signed-payload"
+                     (let [json-response-body (-> response :body json/parse-string)
+                           jws-signed-payload (get json-response-body "jws-signed-payload")]
+                       (fact "body includes jku which is the external-jwk-set-url (absolute path of jwk-set)"
+                             (get json-response-body "jku")  => external-jwk-set-url)
+                       (fact "body contains the jws-signed-payload"
                              jws-signed-payload =not=> nil?)
-                       (fact "the jws-signed-payload can be decoded and contains the activities"
+                       (fact "jws-signed-payload can be decoded and contains the activities"
                              (-> (jt/verify-signature-and-decode jws-signed-payload jt/test-json-web-key)
                                  json/parse-string) => expected-ordered-activities))))))))
 

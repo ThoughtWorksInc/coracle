@@ -13,8 +13,8 @@
   (let [activities-signed-and-encoded-payload (-> activities
                                                   json/generate-string
                                                   jws-generator)]
-    (-> (r/response {:jws-signed-payload activities-signed-and-encoded-payload})
-        (assoc-in [:headers "jku"] external-jwk-set-url)
+    (-> (r/response {:jws-signed-payload activities-signed-and-encoded-payload
+                     :jku external-jwk-set-url})
         (r/content-type "application/jose+json"))))
 
 (defn- bad-request-response [body]
