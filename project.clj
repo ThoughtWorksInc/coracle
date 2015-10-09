@@ -26,6 +26,7 @@
                                       [lein-environ "1.0.1"]]
                        :env          {:host   "0.0.0.0"
                                       :port   "8000"
+                                      :external-jwk-set-url "http://localhost:8000/jwk-set"
                                       :mongodb-host "localhost"
                                       :mongodb-port "27017"
                                       :mongodb-db   "coracle"}}

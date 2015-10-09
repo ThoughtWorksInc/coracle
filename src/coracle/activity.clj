@@ -9,11 +9,12 @@
   (-> (r/response activities)
       (r/content-type "application/activity+json")))
 
-(defn- signed-activity-response [jws-generator activities]
+(defn- signed-activity-response [external-jwk-set-url jws-generator activities]
   (let [activities-signed-and-encoded-payload (-> activities
                                                   json/generate-string
                                                   jws-generator)]
     (-> (r/response {:jws-signed-payload activities-signed-and-encoded-payload})
+        (assoc-in [:headers "jku"] external-jwk-set-url)
         (r/content-type "application/jose+json"))))
 
 (defn- bad-request-response [body]
@@ -36,19 +37,19 @@
 (defn- published [activity-json]
   (get activity-json "published"))
 
-(defn- generate-activity-response [db jws-generator query-params]
+(defn- generate-activity-response [db external-jwk-set-url jws-generator query-params]
   (let [activities (->> (db/fetch-activities db query-params)
                         (sort-by published descending)
                         (map m/stringify-activity-timestamp))]
     (if (= "true" (:signed query-params))
-      (signed-activity-response jws-generator activities)
+      (signed-activity-response external-jwk-set-url jws-generator activities)
       (unsigned-activity-response activities))))
 
-(defn get-activities [db jws-generator req]
+(defn get-activities [db external-jwk-set-url jws-generator req]
   (let [query-params (-> req :params m/marshall-query-params)
         error-m (:error query-params)]
     (if (empty? error-m)
-      (generate-activity-response db jws-generator query-params)
+      (generate-activity-response db external-jwk-set-url jws-generator query-params)
       (bad-request-response error-m))))
 
 (defn latest-published-timestamp [db _]

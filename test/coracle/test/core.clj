@@ -28,8 +28,7 @@
 (def timestamp (t/now))
 
 (defn generate-test-handler [parameters]
-  (handler (:db parameters) (:bearer-token parameters) (:json-web-key-set parameters) (:jws-generator parameters)))
-
+  (handler (:db parameters) (:config-m parameters) (:json-web-key-set parameters) (:jws-generator parameters)))
 
 (facts "Can store json activity"
        (h/with-db-do
@@ -37,6 +36,7 @@
            (let [test-handler (generate-test-handler {:db test-db})
                  request (post-json "/activities" (activity-json "dave" timestamp))]
              (-> (test-handler request) :status) => 201
+             (count (db/fetch-activities test-db {})) => 1
              (first (db/fetch-activities test-db {})) => (contains {"actor" "dave"})))))
 
 (fact "cannot store duplicate activities"
@@ -97,7 +97,9 @@
 (facts "Can load json activitites"
        (h/with-db-do
          (fn [test-db]
-           (let [test-handler (generate-test-handler {:db            test-db
+           (let [external-jwk-set-url "https://external.url/as2/jwk-set"
+                 test-handler (generate-test-handler {:db            test-db
+                                                      :config-m      {:external-jwk-set-url external-jwk-set-url}
                                                       :jws-generator (jws/jws-generator jt/test-json-web-key)})
                  d1 (t/now)
                  d2 (t/plus (t/now) (t/weeks 1))
@@ -120,6 +122,9 @@
                          response (test-handler request)]
                      (fact "the correct content-type is used"
                            (-> response :headers (get "Content-Type")) => "application/jose+json")
+                     (fact "response includes jku header with absolute path of jwk-set"
+                           (-> response :headers (get "jku")) => external-jwk-set-url)
+
 
                      (let [jws-signed-payload (-> response :body json/parse-string (get "jws-signed-payload"))]
                        (fact "the body contains the jws-signed-payload"

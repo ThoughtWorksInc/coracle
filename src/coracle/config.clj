@@ -11,6 +11,8 @@
   ([env-key]
     (get-required env-key nil)))
 
+(defn external-jwk-set-url [] (get-required :external-jwk-set-url))
+
 (defn app-port [] (Integer. (get-required :port)))
 (defn app-host [] (get-required :host))
 
