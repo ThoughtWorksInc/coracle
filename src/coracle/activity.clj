@@ -7,7 +7,8 @@
 
 (defn- unsigned-activity-response [activities]
   (-> (r/response activities)
-      (r/content-type "application/activity+json")))
+      (r/content-type "application/activity+json")
+      (r/header "charset" "utf-8")))
 
 (defn- signed-activity-response [external-jwk-set-url jws-generator activities]
   (let [activities-signed-and-encoded-payload (-> activities
@@ -15,7 +16,8 @@
                                                   jws-generator)]
     (-> (r/response {:jws-signed-payload activities-signed-and-encoded-payload
                      :jku external-jwk-set-url})
-        (r/content-type "application/jose+json"))))
+        (r/content-type "application/jose+json")
+        (r/charset "utf-8"))))
 
 (defn- bad-request-response [body]
   (-> (r/response body) (r/status 400)))

@@ -121,7 +121,7 @@
                    (let [request (r/request :get "/activities?signed=true")
                          response (test-handler request)]
                      (fact "the correct content-type is used"
-                           (-> response :headers (get "Content-Type")) => "application/jose+json")
+                           (-> response :headers (get "Content-Type")) => "application/jose+json; charset=utf-8")
 
                      (let [json-response-body (-> response :body json/parse-string)
                            jws-signed-payload (get json-response-body "jws-signed-payload")]
