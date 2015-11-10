@@ -8,7 +8,7 @@
 (defn- unsigned-activity-response [activities]
   (-> (r/response activities)
       (r/content-type "application/activity+json")
-      (r/header "charset" "utf-8")))
+      (r/charset "utf-8")))
 
 (defn- signed-activity-response [external-jwk-set-url jws-generator activities]
   (let [activities-signed-and-encoded-payload (-> activities

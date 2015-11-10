@@ -92,7 +92,7 @@
              (let [response (test-handler request)]
                (fact
                  (-> response :body json/parse-string) => [(activity-json "dave" timestamp)]
-                 (get-in response [:headers "Content-Type"]) => "application/activity+json"))))))
+                 (get-in response [:headers "Content-Type"]) => "application/activity+json; charset=utf-8"))))))
 
 (facts "Can load json activitites"
        (h/with-db-do
