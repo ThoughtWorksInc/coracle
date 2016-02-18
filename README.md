@@ -12,9 +12,9 @@ The latest Coracle image can be retrieved with:
 
 A container can be started like this:
 
-    docker run -d --name coracle --link mongo:mongo -p 7000:7000 dcent/coracle
+    docker run -d --name coracle --env-file=<path to env file>/coracle.env --link coracle-mongo:mongo -p 7000:7000 dcent/coracle
 
-Note this assumes that you have a mongo container running with the name 'mongo'.
+Note this assumes that you have a mongo container running with the name 'coracle-mongo'.
 
 
 ----------------------
@@ -25,6 +25,7 @@ The following environment variables can be passed into the docker container to c
 ##### Required:
 
 - **BEARER_TOKEN** -  The app will not start without it. Only POST requests that have a matching token in the HTTP header (e.g. "bearer-token" "123") are permitted.
+- **EXTERNAL_JWK_SET_URL** - The app will not start without it. the location of the endpoint in the app to get the keyset. Will be the address of the coracle instance with /jwk-set
    
 ##### Optional:
 
