@@ -5,6 +5,7 @@
             [clj-time.coerce :as tc]))
 
 (def valid-timestamp (t/date-time 2015 6 7))
+(def invalid-timestamp-str "<script>something malicious</script>")
 (def valid-timestamp-str (str valid-timestamp))
 (def valid-timestamp-long (tc/to-long valid-timestamp))
 
@@ -45,4 +46,5 @@
   {:from valid-timestamp-str}   {:from valid-timestamp-long}
   {:from valid-timestamp-str
    :to valid-timestamp-str}     {:from valid-timestamp-long
-                                  :to valid-timestamp-long})
+                                  :to valid-timestamp-long}
+  {:from invalid-timestamp-str} {:error {:from "invalid"}, :from invalid-timestamp-str})
