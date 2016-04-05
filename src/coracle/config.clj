@@ -13,10 +13,10 @@
 
 (defn external-jwk-set-url [] (get-required :external-jwk-set-url))
 
-(defn app-port [] (Integer. (get-required :port)))
-(defn app-host [] (get-required :host))
+(defn app-port [] (Integer. (get-required :port "7000")))
+(defn app-host [] (get-required :host "0.0.0.0"))
 
-(defn mongo-port [] (get-required :mongodb-port))
+(defn mongo-port [] (get-required :mongodb-port "27017"))
 
 (defn mongo-container-tcp [port]
   (let [k (-> (format "mongo-port-%s-tcp-addr" port) keyword)]
@@ -30,7 +30,7 @@
       (throw (Exception. "Host not specified, and environment variable with linked container host cannot be found.")))))
 
 (defn mongo-db []
-  (get-required :mongodb-db))
+  (get-required :mongodb-db "coracle"))
 
 (defn mongo-uri []
   (format "mongodb://%s:%s/%s" (mongo-host) (mongo-port) (mongo-db)))
