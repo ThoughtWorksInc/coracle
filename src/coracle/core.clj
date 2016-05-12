@@ -11,7 +11,8 @@
             [coracle.activity :as a]
             [coracle.config :as c]
             [coracle.db :as db]
-            [coracle.jws :as jws]))
+            [coracle.jws :as jws]
+            [coracle.migration :as m]))
 
 (defn not-found-handler [_]
   (-> (r/response {:error "not found"}) (r/status 404)))
@@ -70,4 +71,5 @@
         json-web-key (jws/generate-json-web-key (jws/generate-key-id))
         json-web-key-set (jws/json-web-key->json-web-key-set json-web-key)
         jws-generator (jws/jws-generator json-web-key)]
+    (m/run-migrations db)
     (start-server db config-m json-web-key-set jws-generator)))
