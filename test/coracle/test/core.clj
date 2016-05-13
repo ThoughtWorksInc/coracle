@@ -91,7 +91,11 @@
              (db/add-activity test-db (activity-json "dave" timestamp))
              (let [response (test-handler request)]
                (fact
-                 (-> response :body json/parse-string) => [(activity-json "dave" timestamp)]
+                 (-> response :body json/parse-string) => {"@context"   "http://www.w3.org/ns/activitystreams"
+                                                           "type"       "Collection"
+                                                           "name"       "Activity stream"
+                                                           "totalItems" 1
+                                                           "items"      [(activity-json "dave" timestamp)]}
                  (get-in response [:headers "Content-Type"]) => "application/activity+json; charset=utf-8"))))))
 
 (facts "Can load json activitites"
@@ -107,15 +111,23 @@
                  _ (db/add-activity test-db (db-activity "tofu" d1))
                  _ (db/add-activity test-db (db-activity "bloob" d2))
                  _ (db/add-activity test-db (db-activity "roy" d3))
-                 expected-ordered-activities [(activity-json "roy" d3)
-                                              (activity-json "bloob" d2)
-                                              (activity-json "tofu" d1)]]
+                 expected-ordered-activities {"@context"   "http://www.w3.org/ns/activitystreams"
+                                              "type"       "Collection"
+                                              "name"       "Activity stream"
+                                              "totalItems" 3
+                                              "items"      [(activity-json "roy" d3)
+                                                            (activity-json "bloob" d2)
+                                                            (activity-json "tofu" d1)]}]
              (fact "Can load all (and are sorted in desc time order"
                    (let [request (r/request :get "/activities")]
                      (->> request test-handler :body json/parse-string) => expected-ordered-activities))
              (fact "Can load using time query"
                    (let [request (r/request :get (format "/activities?from=%s&to=%s" d1 d3))]
-                     (-> request test-handler :body json/parse-string) => [(activity-json "bloob" d2)]))
+                     (-> request test-handler :body json/parse-string) => {"@context"   "http://www.w3.org/ns/activitystreams"
+                                                                           "type"       "Collection"
+                                                                           "name"       "Activity stream"
+                                                                           "totalItems" 1
+                                                                           "items"      [(activity-json "bloob" d2)]}))
 
              (fact "Can load signed activities using signed query"
                    (let [request (r/request :get "/activities?signed=true")
@@ -126,7 +138,7 @@
                      (let [json-response-body (-> response :body json/parse-string)
                            jws-signed-payload (get json-response-body "jws-signed-payload")]
                        (fact "body includes jku which is the external-jwk-set-url (absolute path of jwk-set)"
-                             (get json-response-body "jku")  => external-jwk-set-url)
+                             (get json-response-body "jku") => external-jwk-set-url)
                        (fact "body contains the jws-signed-payload"
                              jws-signed-payload =not=> nil?)
                        (fact "jws-signed-payload can be decoded and contains the activities"

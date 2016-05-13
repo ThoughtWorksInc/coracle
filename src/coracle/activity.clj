@@ -15,7 +15,7 @@
                                                   json/generate-string
                                                   jws-generator)]
     (-> (r/response {:jws-signed-payload activities-signed-and-encoded-payload
-                     :jku external-jwk-set-url})
+                     :jku                external-jwk-set-url})
         (r/content-type "application/jose+json")
         (r/charset "utf-8"))))
 
@@ -39,10 +39,18 @@
 (defn- published [activity-json]
   (get activity-json "published"))
 
+(defn surround-with-coll-object [activities]
+  {(keyword "@context") "http://www.w3.org/ns/activitystreams"
+   :type                "Collection"
+   :name                "Activity stream"
+   :totalItems          (count activities)
+   :items               activities})
+
 (defn- generate-activity-response [db external-jwk-set-url jws-generator query-params]
   (let [activities (->> (db/fetch-activities db query-params)
                         (sort-by published descending)
-                        (map m/stringify-activity-timestamp))]
+                        (map m/stringify-activity-timestamp)
+                        surround-with-coll-object)]
     (if (= "true" (:signed query-params))
       (signed-activity-response external-jwk-set-url jws-generator activities)
       (unsigned-activity-response activities))))
